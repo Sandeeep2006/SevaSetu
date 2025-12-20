@@ -1,0 +1,26 @@
+[
+  {
+    "name": "PM Kisan Samman Nidhi",
+    "description": "Financial benefit of Rs 6000 per year to landholding farmer families, payable in three equal installments of Rs 2000 each.",
+    "eligibility": "Must be a farmer. Must own cultivable land. Excludes institutional landholders and high-income groups.Income should be below 2.5 Lakhs.",
+    "documents": "Aadhaar Card, Landholding papers, Bank Account details."
+  },
+  {
+    "name": "Ayushman Bharat PM-JAY",
+    "description": "Health assurance scheme providing cover of Rs 5 lakhs per family per year for secondary and tertiary care hospitalization.",
+    "eligibility": "Families listed in SECC 2011 database, low income, rural families with no adult male member 16-59 years.",
+    "documents": "Ration Card, Aadhaar, Family ID."
+  },
+  {
+    "name": "Pradhan Mantri Awas Yojana (Urban)",
+    "description": "Provides pucca house to eligible urban poor. Interest subsidy on home loans.",
+    "eligibility": "Annual family income up to Rs 18 Lakhs. The family should not own a pucca house in India.",
+    "documents": "Income Proof, Aadhaar, PAN Card, Voter ID."
+  },
+  {
+    "name": "Atal Pension Yojana",
+    "description": "Guaranteed monthly pension of Rs 1000 to Rs 5000 for unorganized sector workers.",
+    "eligibility": "Age between 18-40 years. Must have a savings bank account.",
+    "documents": "Aadhaar, Bank Passbook."
+  }
+]

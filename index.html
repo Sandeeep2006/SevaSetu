@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 🇮🇳 SevaSetu Voice Agent</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 40px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            margin: auto;
+        }
+
+        h1 {
+            color: #e67e22;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #bdc3c7;
+            font-size: 16px;
+            width: 80%;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        button {
+            padding: 20px 40px;
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            transition: 0.3s;
+            color: white;
+            background-color: #e74c3c;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        button:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #recordBtn.recording {
+            background-color: #c0392b;
+            animation: pulse 1.5s infinite;
+        }
+
+        .status {
+            margin-top: 25px;
+            font-weight: bold;
+            color: #555;
+            height: 24px;
+        }
+
+        .chat-box {
+            margin-top: 30px;
+            text-align: left;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #eee;
+            min-height: 120px;
+        }
+
+        .label {
+            font-size: 12px;
+            color: #95a5a6;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .text-content {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(192, 57, 43, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(192, 57, 43, 0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>🇮🇳 SevaSetu</h1>
+        <p class="subtitle">Voice-First Government Assistant</p>
+
+        <select id="langSelect">
+            <option value="hindi" selected>Hindi (हिंदी)</option>
+            <option value="marathi">Marathi (मराठी)</option>
+            <option value="telugu">Telugu (తెలుగు)</option>
+            <option value="tamil">Tamil (தமிழ்)</option>
+            <option value="odiya">Odiya (ଓଡ଼ିଆ)</option>
+            <option value="bengali">Bengali (বাংলা)</option>
+        </select>
+        <br>
+
+        <button id="recordBtn">🎙️ Hold to Speak</button>
+
+        <div class="status" id="status">Ready to help</div>
+
+        <div class="chat-box">
+            <span class="label">You Said:</span>
+            <div id="userText" class="text-content">...</div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+            <span class="label">Agent Replied:</span>
+            <div id="agentText" class="text-content">...</div>
+        </div>
+    </div>
+
+    <script>
+        const recordBtn = document.getElementById('recordBtn');
+        const status = document.getElementById('status');
+        const userTextField = document.getElementById('userText');
+        const agentTextField = document.getElementById('agentText');
+        const langSelect = document.getElementById('langSelect');
+
+        let mediaRecorder;
+        let audioChunks = [];
+
+        //Audio 1
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = event => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    // UI ele1
+                    status.innerText = "Processing... 🧠";
+
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const formData = new FormData();
+                    formData.append("file", audioBlob, "input.wav");
+
+                    // Language Selector
+                    const selectedLang = langSelect.value;
+                    formData.append("language", selectedLang);
+
+                    try {
+                        const response = await fetch("http://localhost:8000/chat", {
+                            method: "POST",
+                            body: formData
+                        });
+
+                        if (!response.ok) throw new Error("Server Error");
+
+                        const data = await response.json();
+
+                        // UI Update: Show Text
+                        userTextField.innerText = data.user_text;
+                        agentTextField.innerText = data.agent_text;
+                        status.innerText = "Speaking... 🔊";
+
+                        // Play Audio
+                        const audio = new Audio("data:audio/wav;base64," + data.audio);
+                        audio.play();
+                        audio.onended = () => { status.innerText = "Ready"; };
+
+                    } catch (error) {
+                        console.error(error);
+                        status.innerText = "Error: Is backend running? ❌";
+                    }
+                };
+            })
+            .catch(err => {
+                console.error("Microphone Error:", err);
+                status.innerText = "Microphone blocked! 🚫";
+            });
+
+        // Button ui
+        recordBtn.addEventListener('mousedown', () => {
+            audioChunks = [];
+            if (mediaRecorder && mediaRecorder.state === "inactive") {
+                mediaRecorder.start();
+                recordBtn.classList.add("recording");
+                status.innerText = "Listening... 👂";
+            }
+        });
+
+        recordBtn.addEventListener('mouseup', () => {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                recordBtn.classList.remove("recording");
+            }
+        });
+
+        // Touch support for mobile
+        recordBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Prevent scrolling
+            audioChunks = [];
+            if (mediaRecorder && mediaRecorder.state === "inactive") {
+                mediaRecorder.start();
+                recordBtn.classList.add("recording");
+                status.innerText = "Listening... 👂";
+            }
+        });
+
+        recordBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                recordBtn.classList.remove("recording");
+            }
+        });
+    </script>
+
+</body>
+
+</html>

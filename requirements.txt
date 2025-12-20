@@ -1,0 +1,23 @@
+# Environment & config
+python-dotenv
+
+# Google Gemini (LLM + Embeddings)
+langchain-google-genai
+
+# LangChain core
+langchain-core
+
+# LangGraph (agentic workflows)
+langgraph
+
+# Pinecone vector database
+pinecone-client
+langchain-pinecone
+
+# Web & API
+requests
+fastapi
+uvicorn
+
+# Utilities (standard libs like os, json, base64, operator are NOT listed)
+python-multipart
