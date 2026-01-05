@@ -22,5 +22,23 @@
     "description": "Guaranteed monthly pension of Rs 1000 to Rs 5000 for unorganized sector workers.",
     "eligibility": "Age between 18-40 years. Must have a savings bank account.",
     "documents": "Aadhaar, Bank Passbook."
+  },
+  {
+    "name": "Pradhan Mantri Awas Yojana - Gramin (PMAY-G)",
+    "description": "A housing scheme to provide pucca houses with basic amenities to all houseless households and those living in kutcha and dilapidated houses in rural areas.",
+    "eligibility": "Homeless families, families with kutcha houses, no adult male member between 16-59 years, landless households deriving major income from casual labour.",
+    "documents": "Financial assistance of Rs 1.20 Lakh in plains and Rs 1.30 Lakh in hilly states for construction of a house. Additional assistance for toilet construction under Swachh Bharat Mission."
+  },
+  {
+    "name": "Ayushman Bharat Pradhan Mantri Jan Arogya Yojana (PM-JAY)",
+    "description": "The world's largest government-funded healthcare program targeting more than 50 crore beneficiaries.",
+    "eligibility": "Families listed in SECC 2011 database based on deprivation criteria (e.g., households with only one room with kucha walls and roof, female-headed households with no adult male member).",
+    "documents": "Health coverage of Rs 5 Lakh per family per year for secondary and tertiary care hospitalization in public and private empaneled hospitals. Cashless access to health care services."
+  },
+  {
+    "name": "Pradhan Mantri Mudra Yojana (PMMY)",
+    "description": "A scheme to provide loans up to 10 Lakh to non-corporate, non-farm small/micro enterprises.",
+    "eligibility": "Any Indian Citizen who has a business plan for a non-farm sector income generating activity such as manufacturing, processing, trading or service sector.",
+    "documents": "Loans in three categories: Shishu (up to Rs 50,000), Kishore (Rs 50,000 to Rs 5 Lakh), and Tarun (Rs 5 Lakh to Rs 10 Lakh). No collateral security required."
   }
 ]

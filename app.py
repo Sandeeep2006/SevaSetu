@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
-
+from sarvamai import SarvamAI
 
 from agent import agent_app
 
@@ -25,7 +25,7 @@ app.add_middleware(
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY")
 
 # --- CONFIG SWITCHER ---
-# This acts as your "Switch Case" for different languages
+
 LANGUAGE_CONFIG = {
     "hindi": {"code": "hi-IN", "speaker": "anushka"},
     "marathi": {"code": "mr-IN", "speaker": "anushka"}, 
@@ -61,35 +61,31 @@ def transcribe_audio(audio_bytes, lang_key):
         print(f"STT Exception: {str(e)}")
         return None
 
+client = SarvamAI(api_subscription_key=SARVAM_API_KEY)
+
 def text_to_speech(text, lang_key):
-    """Sends text to Sarvam using the correct speaker and language."""
-    url = "https://api.sarvam.ai/text-to-speech"
+    """Sends text to Sarvam using the official Python SDK."""
     
     config = LANGUAGE_CONFIG.get(lang_key, LANGUAGE_CONFIG["hindi"])
     
-    payload = {
-        "inputs": [text],
-        "target_language_code": config["code"], # Dynamic Target
-        "speaker": config["speaker"],
-        "pitch": 0, "pace": 1.0, "loudness": 1.5,
-        "speech_sample_rate": 8000,
-        "enable_preprocessing": True,
-        "model": "bulbul:v2"
-    }
-    
-    headers = {
-        "api-subscription-key": SARVAM_API_KEY,
-        "Content-Type": "application/json"
-    }
-
-    response = requests.post(url, json=payload, headers=headers)
-    if response.status_code == 200:
-        return response.json()["audios"][0]
-    else:
-        print(f"TTS Error: {response.text}")
+    try:
+        response = client.text_to_speech.convert(
+            text=text,
+            target_language_code=config["code"],
+            speaker=config["speaker"],
+            pitch=0,
+            pace=1.0,
+            loudness=1.5,
+            speech_sample_rate=8000,
+            enable_preprocessing=True,
+            model="bulbul:v2"
+        )
+        return response.audios[0]
+    except Exception as e:
+        print(f"TTS Error: {e}")
         return None
 
-# --- UPDATED CHAT ENDPOINT ---
+# --- CHAT ENDPOINT ---
 @app.post("/chat")
 async def chat_endpoint(
     file: UploadFile = File(...), 
